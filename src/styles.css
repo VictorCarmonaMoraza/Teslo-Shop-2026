@@ -1,4 +1,15 @@
-@import "tailwindcss";
-@plugin "daisyui" {
-  themes: light --default, dark --prefersdark, sunset;
+/* 1) Importar la fuente personalizada */
+@font-face {
+  font-family: "Montserrat";
+  src: url("/assets/fonts/montserrat/Montserrat-Medium.ttf") format("truetype");
+  font-weight: 500;
 }
+
+/* 2) Cargar Tailwind */
+@import "tailwindcss";
+
+/* 3) Configurar DaisyUI */
+@plugin "daisyui" {
+  themes: dark --default, dark --prefersdark, sunset;
+}
+
