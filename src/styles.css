@@ -16,15 +16,6 @@
 @theme {
   --font-montserrat: "Montserrat", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
 }
-/* Animación fadeIn en CSS puro */
-/* @keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-in-out;
-} */
 
 /* Utilidad para usar Montserrat explícitamente */
 @utility font-montserrat {
