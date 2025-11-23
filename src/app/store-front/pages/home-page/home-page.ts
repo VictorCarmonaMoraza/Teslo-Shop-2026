@@ -1,5 +1,10 @@
-import { Component } from '@angular/core';
-import { ProductCard } from "../../../products/components/product-card/product-card";
+import { Loaders } from './../../../../../node_modules/cosmiconfig/dist/types.d';
+import { ProductCard } from '@/products/components/product-card/product-card';
+import { ProductsService } from '@/products/services/products.service';
+import { Component, inject } from '@angular/core';
+// import { ProductCard } from "../../../products/components/product-card/product-card";
+import { rxResource } from '@angular/core/rxjs-interop';
+
 
 @Component({
   selector: 'app-home-page',
@@ -9,4 +14,13 @@ import { ProductCard } from "../../../products/components/product-card/product-c
 })
 export class HomePage {
 
+  private productsService = inject(ProductsService);
+
+  productsResource = rxResource({
+    params: () => ({}),
+    stream: ({ params }) => {
+      return this.productsService.getProducts();
+    }
+  });
 }
+
