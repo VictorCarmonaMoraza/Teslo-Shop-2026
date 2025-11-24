@@ -4,16 +4,17 @@
 </div>
 }
 @if(productResource.hasValue()){
-<div class="grid grid-cols-1 sm:grid-cols-2 gap">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
   <!-- Imagen del producto  -->
-  <p>Imagenes</p>
+  <app-product-carousel [images]="productResource.value().images" />
   <div>
     <h2 class="text-2xl font-bold font-montserrat"> {{productResource.value().title}}</h2>
+    <div class="divider"></div>
+    <!-- Descripcion del producto  -->
+    <p>
+      {{productResource.value().description}}
+    </p>
   </div>
-  <div class="divider"></div>
-  <!-- Descripcion del producto  -->
-  <p>
-    {{productResource.value().description}}
-  </p>
+
 </div>
 }
