@@ -15,8 +15,8 @@ export class ProductImagePipe implements PipeTransform {
       return `${baseUrl}/files/product/${value}`;
     }
     // 2. Si value no existe o no es un array o está vacío → devolvemos placeholder
-    if (!value || !Array.isArray(value) || value.length === 0) {
-      return "assets/images/no-image.jpg"; // sin "./"
+    if (value.length === 0) {
+      return "assets/images/no-image.jpg";
     }
     return `${baseUrl}/files/product/${value[0]}`;
   }
