@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Product, ProductsResponse } from '../interfaces/product.interface';
 import { Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Product, ProductsResponse } from '../interfaces/product.interface';
 
 
 const baseUrl = environment.baseUrl;
@@ -31,6 +31,8 @@ export class ProductsService {
         tap(resp => console.log('ProductsResponse', resp))
       );
   }
+
+
 
   //Metodo para obtener producto por slug
   getProductBySlug(idSlug: string): Observable<Product> {

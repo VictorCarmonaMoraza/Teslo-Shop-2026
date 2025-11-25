@@ -4,7 +4,7 @@
   </figure>
   <div class="card-body">
     <h2 class="card-title font-montserrat text-accent text-lg hover:underline cursor-pointer"
-      [routerLink]="['/product',product().slug]">{{product().title}}</h2>
+      [routerLink]="['/product',product().slug]">{{product().title | slice : 0:30}}...</h2>
     <p>{{product().description | slice : 0:70}}...</p>
     <div class="card-actions justify-end">
       <!-- <button class="btn btn-primary">Buy Now</button> -->
