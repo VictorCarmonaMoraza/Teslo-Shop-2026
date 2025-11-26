@@ -1,0 +1,34 @@
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { User } from '../interfaces/user.interface';
+import { HttpClient } from '@angular/common/http';
+
+//checking: verificando token o sesión
+//authenticated: usuario logeado
+//not-authenticated: no hay sesión
+type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
+
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+
+  private _authStatus = signal<AuthStatus>('checking');
+  // Almacena el usuario autenticado:
+  //Si es null, significa que no hay usuario.
+  private _user = signal<User | null>(null);
+  private _token = signal<string | null>(null);
+
+  private http = inject(HttpClient);
+
+  //Saber el estado
+  authStatus = computed<AuthStatus>(() => {
+    // Estado de autenticación
+    if (this._authStatus() === 'checking') return 'checking';
+    // Si hay un usuario autenticado
+    if (this._user()) return 'authenticated';
+    // Si no hay usuario autenticado
+    return 'not-authenticated';
+  });
+
+  user = computed<User | null>(() => this._user());
+  token = computed<string | null>(() => this._token());
+
+}
