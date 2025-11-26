@@ -3,7 +3,7 @@ import { User } from '../interfaces/user.interface';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { AuthResponse } from '../interfaces/auth-response.interface';
-import { tap } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 
 //checking: verificando token o sesión
 //authenticated: usuario logeado
@@ -22,8 +22,6 @@ export class AuthService {
 
   private http = inject(HttpClient);
 
-
-
   //Saber el estado
   authStatus = computed<AuthStatus>(() => {
     // Estado de autenticación
@@ -38,7 +36,7 @@ export class AuthService {
   token = computed<string | null>(() => this._token());
 
 
-  login(email: string, password: string) {
+  login(email: string, password: string): Observable<boolean> {
     return this.http.post<AuthResponse>(`${baseUrl}/auth/login`, {
       email: email,
       password: password
@@ -50,8 +48,17 @@ export class AuthService {
 
         //Grabamos el token en el localStorage
         localStorage.setItem('token', resp.token);
-      })
-    )
+      }),
+      map(() => true),
+      //Cualquier estado que no sea 200 cae aquí
+      catchError((error: any) => {
+        //Limpiamos el usuario
+        this._user.set(null);
+        this._token.set(null);
+        this._authStatus.set('not-authenticated');
+        return of(false)
+      }
+      ));
   }
 
 }
