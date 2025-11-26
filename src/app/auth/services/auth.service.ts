@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { AuthResponse } from '../interfaces/auth-response.interface';
 import { catchError, map, Observable, of, tap } from 'rxjs';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 //checking: verificando token o sesión
 //authenticated: usuario logeado
@@ -18,9 +19,14 @@ export class AuthService {
   // Almacena el usuario autenticado:
   //Si es null, significa que no hay usuario.
   private _user = signal<User | null>(null);
+
   private _token = signal<string | null>(null);
 
   private http = inject(HttpClient);
+
+  checkStatusResource = rxResource({
+    stream: () => this.checkStatus()
+  })
 
   //Saber el estado
   authStatus = computed<AuthStatus>(() => {
@@ -41,6 +47,38 @@ export class AuthService {
       email: email,
       password: password
     }).pipe(
+      tap(resp => {
+        this._authStatus.set('authenticated');
+        this._user.set(resp.user);
+        this._token.set(resp.token);
+
+        //Grabamos el token en el localStorage
+        localStorage.setItem('token', resp.token);
+      }),
+      map(() => true),
+      //Cualquier estado que no sea 200 cae aquí
+      catchError((error: any) => {
+        //Limpiamos el usuario
+        this._user.set(null);
+        this._token.set(null);
+        this._authStatus.set('not-authenticated');
+        return of(false)
+      }
+      ));
+  }
+
+  checkStatus(): Observable<boolean> {
+    //Devolvemos el token si tenemos del localstorage
+    const token = localStorage.getItem('token')
+    if (!token) {
+      return of(false)
+    }
+    return this.http.get<AuthResponse>(`${baseUrl}/auth/check-status`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    }
+    ).pipe(
       tap(resp => {
         this._authStatus.set('authenticated');
         this._user.set(resp.user);
