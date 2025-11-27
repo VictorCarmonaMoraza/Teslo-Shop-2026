@@ -47,30 +47,18 @@ export class AuthService {
       email: email,
       password: password
     }).pipe(
-      tap(resp => {
-        this._authStatus.set('authenticated');
-        this._user.set(resp.user);
-        this._token.set(resp.token);
-
-        //Grabamos el token en el localStorage
-        localStorage.setItem('token', resp.token);
-      }),
-      map(() => true),
+      map((resp) => this.handleAuthSuccess(resp)),
+      // map(() => true),
       //Cualquier estado que no sea 200 cae aquí
-      catchError((error: any) => {
-        //Limpiamos el usuario
-        this._user.set(null);
-        this._token.set(null);
-        this._authStatus.set('not-authenticated');
-        return of(false)
-      }
-      ));
+      catchError((error: any) => this.handleAuthError(error))
+    );
   }
 
   checkStatus(): Observable<boolean> {
     //Devolvemos el token si tenemos del localstorage
     const token = localStorage.getItem('token')
     if (!token) {
+      this.logout();
       return of(false)
     }
     return this.http.get<AuthResponse>(`${baseUrl}/auth/check-status`, {
@@ -79,24 +67,35 @@ export class AuthService {
       }
     }
     ).pipe(
-      tap(resp => {
-        this._authStatus.set('authenticated');
-        this._user.set(resp.user);
-        this._token.set(resp.token);
-
-        //Grabamos el token en el localStorage
-        localStorage.setItem('token', resp.token);
-      }),
-      map(() => true),
+      map((resp) => this.handleAuthSuccess(resp)),
+      // map(() => true),
       //Cualquier estado que no sea 200 cae aquí
-      catchError((error: any) => {
-        //Limpiamos el usuario
-        this._user.set(null);
-        this._token.set(null);
-        this._authStatus.set('not-authenticated');
-        return of(false)
-      }
-      ));
+      catchError((error: any) => this.handleAuthError(error))
+    );
+  }
+
+  logout() {
+    this._user.set(null);
+    this._token.set(null);
+    this._authStatus.set('not-authenticated');
+    //Borramos de localStorage el token
+    localStorage.removeItem('token');
+  }
+
+  //private handleAuthSuccess(resp: AuthResponse) {
+  private handleAuthSuccess({ token, user }: AuthResponse) {
+    this._authStatus.set('authenticated');
+    this._user.set(user);
+    this._token.set(token);
+
+    //Grabamos el token en el localStorage
+    localStorage.setItem('token', token);
+    return true
+  }
+
+  private handleAuthError(error: any) {
+    this.logout();
+    return of(false);
   }
 
 }
