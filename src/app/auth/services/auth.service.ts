@@ -20,7 +20,7 @@ export class AuthService {
   //Si es null, significa que no hay usuario.
   private _user = signal<User | null>(null);
 
-  private _token = signal<string | null>(null);
+  private _token = signal<string | null>(localStorage.getItem('token'));
 
   private http = inject(HttpClient);
 
