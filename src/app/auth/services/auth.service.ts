@@ -54,6 +54,19 @@ export class AuthService {
     );
   }
 
+  register(email: string, password: string, fullName: string): Observable<boolean> {
+    return this.http.post<AuthResponse>(`${baseUrl}/auth/register`, {
+      email: email,
+      password: password,
+      fullName: fullName
+    }).pipe(
+      map((resp) => this.handleAuthSuccess(resp)),
+      // map(() => true),
+      //Cualquier estado que no sea 200 cae aquí
+      catchError((error: any) => this.handleAuthError(error))
+    );
+  }
+
   checkStatus(): Observable<boolean> {
     //Devolvemos el token si tenemos del localstorage
     const token = localStorage.getItem('token')
@@ -80,7 +93,7 @@ export class AuthService {
     this._authStatus.set('not-authenticated');
     //Borramos de localStorage el token
     //TODO : revertir
-    //localStorage.removeItem('token');
+    localStorage.removeItem('token');
   }
 
   //private handleAuthSuccess(resp: AuthResponse) {
