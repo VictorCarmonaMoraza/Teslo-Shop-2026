@@ -1,10 +1,10 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
-import { User } from '../interfaces/user.interface';
 import { HttpClient } from '@angular/common/http';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { catchError, map, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AuthResponse } from '../interfaces/auth-response.interface';
-import { catchError, map, Observable, of, tap } from 'rxjs';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { User } from '../interfaces/user.interface';
 
 //checking: verificando token o sesión
 //authenticated: usuario logeado
@@ -40,6 +40,7 @@ export class AuthService {
 
   user = computed<User | null>(() => this._user());
   token = computed<string | null>(() => this._token());
+  isAdmin = computed(() => this._user()?.roles.includes('admin') ?? false)
 
 
   login(email: string, password: string): Observable<boolean> {
