@@ -60,4 +60,20 @@ export class ProductsService {
       );
   }
 
+
+  //Metodo para obtener producto por slug
+  getProductById(id: string): Observable<Product> {
+
+    if (this.productCache.has(id)) {
+      return of(this.productCache.get(id)!);
+    }
+
+    return this.http.get<Product>(`${baseUrl}/products/${id}`)
+      .pipe(
+        delay(2000),
+        tap(resp => console.log('getProductBySlug', resp)),
+        tap(resp => this.productCache.set(id, resp))
+      );
+  }
+
 }
