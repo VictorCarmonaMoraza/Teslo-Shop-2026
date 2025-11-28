@@ -6,6 +6,7 @@
 @if(productResource.hasValue()){
 <!--Producto-->
 <h1>{{productResource.value().title}}</h1>
+<app-product-details [product]="productResource.value()!" />
 }
 
 

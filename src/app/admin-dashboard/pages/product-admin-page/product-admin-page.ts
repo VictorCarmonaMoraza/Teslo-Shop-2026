@@ -3,10 +3,11 @@ import { Component, effect, inject, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
+import { ProductDetails } from './product-details/product-details';
 
 @Component({
   selector: 'app-product-admin-page',
-  imports: [],
+  imports: [ProductDetails],
   templateUrl: './product-admin-page.html',
   styleUrl: './product-admin-page.css',
 })
@@ -32,6 +33,7 @@ export class ProductAdminPage {
     }
   })
 
+  //si borramos algun numero o letras del id del producto de la url no manda a la url de productos
   redirectEffect = effect(() => {
     if (this.productResource.error()) {
       this.router.navigate(['/admin/products'])
