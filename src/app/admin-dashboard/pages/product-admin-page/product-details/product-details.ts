@@ -4,6 +4,7 @@ import { FormUtils } from '@/utils/form-utils';
 import { Component, inject, input, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormErrorLabel } from "@/shared/components/form-error-label/form-error-label";
+import { ProductsService } from '@/products/services/products.service';
 
 @Component({
   selector: 'app-product-details',
@@ -12,6 +13,8 @@ import { FormErrorLabel } from "@/shared/components/form-error-label/form-error-
   styleUrl: './product-details.css',
 })
 export class ProductDetails implements OnInit {
+  //Inyectamos nuestro servicio de productos
+  productService = inject(ProductsService);
 
   //Para mostrar el producto que le pasamos por el input
   product = input.required<Product>();
@@ -49,8 +52,37 @@ export class ProductDetails implements OnInit {
 
   onSubmit() {
     const isValid = this.productForm.valid;
+    //Mostramos los errores de los inputs
+    this.productForm.markAllAsTouched();
     //Mostramos datos del formulario
     console.log(this.productForm.value, { isValid })
+    //Si el formulario no es valido, no hacemos nada
+    if (!isValid) {
+      return;
+    }
+
+
+    //Obtiene todos los valores actuales del formulario reactivo
+    //formValue es un objeto con todas las propiedades definidas en productForm.
+    const formValue = this.productForm.value;
+
+    //Aquí construyes un objeto llamado productLike que representa
+    //un producto parcial (no todos los campos son obligatorios).
+    const productLike: Partial<Product> = {
+      //Copia todas las propiedades del objeto formValue dentro de productLike
+      ...(formValue as any),
+      //formValue.tags?.toLowerCase()
+      //Convierte la cadena a minúsculas (si existe):
+      tags: formValue.tags?.toLowerCase()
+        //Separa por comas → genera un array:
+        .split(',')
+        //Limpia espacios en blanco:
+        //Si tags es null o undefined, colocas un array vacío.
+        .map(tag => tag.trim()) ?? []
+    };
+
+    console.log(productLike);
+    this.productService.updateProduct(productLike);
   }
 
   onSizeClicked(size: string) {
