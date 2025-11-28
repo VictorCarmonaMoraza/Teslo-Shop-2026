@@ -38,6 +38,7 @@ export class ProductDetails implements OnInit {
     this.setFormValue(this.product())
   }
 
+  //Este método sirve para llenar un formulario (productForm) con los valores de un producto.
   setFormValue(formLike: Partial<Product>) {
     //Hace lo mismo que la siguiente linea
     //this.productForm.patchValue(formLike as any);
@@ -48,6 +49,23 @@ export class ProductDetails implements OnInit {
   onSubmit() {
     //Mostramos datos del formulario
     console.table(this.productForm.value)
+  }
+
+  onSizeClicked(size: string) {
+    //Obtenemos todas las tallas de listado de este producto
+    //Si no viene nada lo mostramos como un string vacio
+    const currentSizes = this.productForm.value.sizes ?? [];
+
+    //Si en el listado de tallas se incluye la talla que hemos seleccionado
+    if (currentSizes.includes(size)) {
+      //Si la talla ya existe la quitamos
+      currentSizes.splice(currentSizes.indexOf(size), 1);
+    } else {
+      currentSizes.push(size);
+    }
+    this.productForm.patchValue({ sizes: currentSizes })
+
+
   }
 
 }
