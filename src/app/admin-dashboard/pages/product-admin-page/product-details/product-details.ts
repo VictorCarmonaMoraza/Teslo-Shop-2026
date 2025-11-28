@@ -3,10 +3,11 @@ import { Product } from '@/products/interfaces/product.interface';
 import { FormUtils } from '@/utils/form-utils';
 import { Component, inject, input, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormErrorLabel } from "@/shared/components/form-error-label/form-error-label";
 
 @Component({
   selector: 'app-product-details',
-  imports: [ProductCarousel, ReactiveFormsModule],
+  imports: [ProductCarousel, ReactiveFormsModule, FormErrorLabel],
   templateUrl: './product-details.html',
   styleUrl: './product-details.css',
 })
@@ -47,8 +48,9 @@ export class ProductDetails implements OnInit {
   }
 
   onSubmit() {
+    const isValid = this.productForm.valid;
     //Mostramos datos del formulario
-    console.table(this.productForm.value)
+    console.log(this.productForm.value, { isValid })
   }
 
   onSizeClicked(size: string) {
@@ -60,6 +62,7 @@ export class ProductDetails implements OnInit {
     if (currentSizes.includes(size)) {
       //Si la talla ya existe la quitamos
       currentSizes.splice(currentSizes.indexOf(size), 1);
+      //Sin no esta la añadimos
     } else {
       currentSizes.push(size);
     }

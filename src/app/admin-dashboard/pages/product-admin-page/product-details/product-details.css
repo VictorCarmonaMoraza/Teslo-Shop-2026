@@ -1,0 +1,8 @@
+.error-container {
+  min-height: 20px;   /* espacio reservado */
+  height: 20px;       /* altura fija */
+  display: flex;
+  align-items: center;
+  margin-top: 2px;    /* opcional */
+  font-size: 0.75rem;
+}
