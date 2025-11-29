@@ -84,7 +84,31 @@ export class ProductsService {
   updateProduct(id: string, productLike: Partial<Product>): Observable<Product> {
     console.log('Actualizando producto')
     //La actualizacion la harenmos mediante patch
+    //PATCH suele usarse para actualizaciones parciales (envías solo los campos modificados).
+    //baseUr: 'http://localhost:3000/api/products/hiopñ12jh44kl67hl'
     return this.http.patch<Product>(`${baseUrl}/products/${id}`, productLike)
+      .pipe(
+        //Ejecutamos un efecto secundario para que actualice la cache de product y de productos
+        tap((product) => this.updateProductCache(product))
+      )
+  }
+
+  //metodo para actualizar el cache
+  updateProductCache(product: Product) {
+    const productId = product.id;
+
+    //Buscamos el id en la cache
+    //Actualiza el primer cache
+    this.productCache.set(productId, product);
+
+    //Actualizar el segundo cache
+    this.productsCache.forEach(productResponse => {
+      productResponse.products = productResponse.products.map((currentProduct) => {
+        return currentProduct.id === productId ? product : currentProduct
+      })
+    })
+
+    console.log('Cache Actualizada');
   }
 
 }

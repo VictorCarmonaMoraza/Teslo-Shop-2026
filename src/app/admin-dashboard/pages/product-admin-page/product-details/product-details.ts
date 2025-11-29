@@ -61,7 +61,6 @@ export class ProductDetails implements OnInit {
       return;
     }
 
-
     //Obtiene todos los valores actuales del formulario reactivo
     //formValue es un objeto con todas las propiedades definidas en productForm.
     const formValue = this.productForm.value;
@@ -82,6 +81,7 @@ export class ProductDetails implements OnInit {
     };
 
     console.log(productLike);
+    //LLamda al servicio para actualizar
     this.productService.updateProduct(this.product().id, productLike).subscribe(
       product => {
         console.log('Producto actualizado')
