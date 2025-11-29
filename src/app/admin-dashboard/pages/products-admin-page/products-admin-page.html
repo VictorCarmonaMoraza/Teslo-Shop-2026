@@ -16,7 +16,21 @@
     <option value="50" class="hover:bg-primary">50</option>
     <option value="100" class="hover:bg-primary">100</option>
   </select>
+
+
+  <!--SECCION CREAR PRODUCTO-->
+  <div class="flex flex-1">
+
+  </div>
+  <button class="btn btn-primary" routerLink="/admin/products/new">Nuevo producto</button>
+
+  <!--FIN SECCION CREAR PRODUCTO-->
+
+
+
 </div>
+
+
 
 <!--Listado-->
 <app-product-table [products]="productsResource.value()?.products ?? []" />

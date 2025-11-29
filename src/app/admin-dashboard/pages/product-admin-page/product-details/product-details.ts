@@ -5,6 +5,7 @@ import { Component, inject, input, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormErrorLabel } from "@/shared/components/form-error-label/form-error-label";
 import { ProductsService } from '@/products/services/products.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-details',
@@ -15,6 +16,7 @@ import { ProductsService } from '@/products/services/products.service';
 export class ProductDetails implements OnInit {
   //Inyectamos nuestro servicio de productos
   productService = inject(ProductsService);
+  router = inject(Router);
 
   //Para mostrar el producto que le pasamos por el input
   product = input.required<Product>();
@@ -79,13 +81,24 @@ export class ProductDetails implements OnInit {
         //Si tags es null o undefined, colocas un array vacío.
         .map(tag => tag.trim()) ?? []
     };
+    if (this.product().id === 'new') {
+      //creamos el producto
+      this.productService.createProduct(productLike).subscribe(
+        product => {
+          console.log('Producto creado');
+          //Cuando se ha terminado de crear el producto se navega al producto creado
+          this.router.navigate(['/admin/products', product.id]);
+        }
+      )
 
-    console.log(productLike);
-    //LLamda al servicio para actualizar
-    this.productService.updateProduct(this.product().id, productLike).subscribe(
-      product => {
-        console.log('Producto actualizado')
-      });
+    } else {
+      console.log(productLike);
+      //LLamda al servicio para actualizar
+      this.productService.updateProduct(this.product().id, productLike).subscribe(
+        product => {
+          console.log('Producto actualizado')
+        });
+    }
   }
 
   onSizeClicked(size: string) {
