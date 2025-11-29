@@ -29,6 +29,11 @@
     </ul>
   </div>
   <div class="navbar-end gap-4">
+    @if(authService.isAdmin()){
+    <!--Si tienes rol administrador lo veras-->
+    <a routerLink="/admin" class="btn text-accent">Admin Panel</a>
+    }
+    <!---->
     <!--Si estas autenticado ponemos tu nombre en la barra del navbar-->
     @if(authService.authStatus()==='authenticated'){
     <button class="btn btn-ghost">
