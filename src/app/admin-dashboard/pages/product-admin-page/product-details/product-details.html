@@ -111,3 +111,10 @@
     <input type="file" class="file-input file-input-bordered w-full mt-4" />
   </div>
 </form>
+
+@if(wasSaved()){
+<!--Mensaje para cuando se ha creado correctamente el nuevo producto-->
+<div class="alert alert-success fixed bottom-4 right-4 w-80">
+  <span>Datos actualizados correctamente</span>
+</div>
+}

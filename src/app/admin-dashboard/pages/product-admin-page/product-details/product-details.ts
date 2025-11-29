@@ -1,11 +1,12 @@
 import { ProductCarousel } from '@/products/components/product-carousel/product-carousel';
 import { Product } from '@/products/interfaces/product.interface';
 import { FormUtils } from '@/utils/form-utils';
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormErrorLabel } from "@/shared/components/form-error-label/form-error-label";
 import { ProductsService } from '@/products/services/products.service';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-product-details',
@@ -17,6 +18,7 @@ export class ProductDetails implements OnInit {
   //Inyectamos nuestro servicio de productos
   productService = inject(ProductsService);
   router = inject(Router);
+  wasSaved = signal(false)
 
   //Para mostrar el producto que le pasamos por el input
   product = input.required<Product>();
@@ -52,7 +54,7 @@ export class ProductDetails implements OnInit {
     this.productForm.patchValue({ tags: formLike.tags?.join(',') })
   }
 
-  onSubmit() {
+  async onSubmit() {
     const isValid = this.productForm.valid;
     //Mostramos los errores de los inputs
     this.productForm.markAllAsTouched();
@@ -82,23 +84,23 @@ export class ProductDetails implements OnInit {
         .map(tag => tag.trim()) ?? []
     };
     if (this.product().id === 'new') {
-      //creamos el producto
-      this.productService.createProduct(productLike).subscribe(
-        product => {
-          console.log('Producto creado');
-          //Cuando se ha terminado de crear el producto se navega al producto creado
-          this.router.navigate(['/admin/products', product.id]);
-        }
-      )
-
+      //Creamos el producto
+      const product = await firstValueFrom(
+        this.productService.createProduct(productLike)
+      );
+      console.log('Producto creado');
+      //Cuando se ha terminado de crear el producto se navega al producto creado
+      this.router.navigate(['/admin/products', product.id]);
     } else {
-      console.log(productLike);
-      //LLamda al servicio para actualizar
-      this.productService.updateProduct(this.product().id, productLike).subscribe(
-        product => {
-          console.log('Producto actualizado')
-        });
+      await firstValueFrom(
+        this.productService.updateProduct(this.product().id, productLike)
+      );
     }
+    //Actualizamos la señal
+    this.wasSaved.set(true);
+    setTimeout(() => {
+      this.wasSaved.set(false);
+    }, 3000)
   }
 
   onSizeClicked(size: string) {
